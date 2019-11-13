@@ -198,41 +198,25 @@ again1s		call	    delay10ms
 ;		Subroutine for Blinking 8 LEDs Sequentially
 ; Blinks the 8 LEDs in sequence from RB0 to RB7 with 1s delays
 ;--------------------------------------------------------------------------
-sequential_blink
-		bsf	    PORTB, 0x00   ; Turn on LED connected to RB0 pin
-		call	    delay1s	    ; for 1 second
-		bcf	    PORTB, 0x00   ; Turn off LED connected to RB0 pin
-		call	    delay1s	    ; for 1 second
-		bsf	    PORTB, 0x01   ; Turn on LED connected to RB1 pin
-		call	    delay1s	    ; for 1 second
-		bcf	    PORTB, 0x01   ; Turn off LED connected to RB1 pin
-		call	    delay1s	    ; for 1 second
-		bsf	    PORTB, 0x02   ; Turn on LED connected to RB2 pin
-		call	    delay1s	    ; for 1 second
-		bcf	    PORTB, 0x02   ; Turn off LED connected to RB2 pin
-		call	    delay1s	    ; for 1 second
-		bsf	    PORTB, 0x03   ; Turn on LED connected to RB3 pin
-		call	    delay1s	    ; for 1 second
-		bcf	    PORTB, 0x03   ; Turn off LED connected to RB3 pin
-		call	    delay1s	    ; for 1 second
-		bsf	    PORTB, 0x04   ; Turn on LED connected to RB4 pin
-		call	    delay1s	    ; for 1 second
-		bcf	    PORTB, 0x04   ; Turn off LED connected to RB4 pin
-		call	    delay1s	    ; for 1 second
-		bsf	    PORTB, 0x05   ; Turn on LED connected to RB5 pin
-		call	    delay1s	    ; for 1 second
-		bcf	    PORTB, 0x05   ; Turn off LED connected to RB5 pin
-		call	    delay1s	    ; for 1 second
-		bsf	    PORTB, 0x06   ; Turn on LED connected to RB6 pin
-		call	    delay1s	    ; for 1 second
-		bcf	    PORTB, 0x06   ; Turn off LED connected to RB6 pin
-		call	    delay1s	    ; for 1 second
-		bsf	    PORTB, 0x07   ; Turn on LED connected to RB7 pin
-		call	    delay1s	    ; for 1 second
-		bcf	    PORTB, 0x07   ; Turn off LED connected to RB7 pin
-		call	    delay1s	    ; for 1 second
+LitLED		equ	    0x25
 
-		return
+sequential_blink
+		movlw	    b'00000001'	    ; Load b'00000001' into W
+		movwf	    LitLED	    ; Move W into LitLED
+
+again8		movf	    LitLED, 0	    ; Move LitLED to W
+		movwf	    PORTB	    ; Turn on LED
+		call	    delay1s	    ; for 1 second
+		movlw	    0x00	    ; Load 0x00 into W
+		movwf	    PORTB	    ; Turn off LED
+		call	    delay1s	    ; for 1 second
+		bcf	    STATUS, C	    ; Ensure carry is clear before rotating
+		rlf	    LitLED	    ; Set next LED pin
+		movlw	    b'00000000'	    ; Load b'00000000' into W
+		xorwf	    LitLED, 0	    ; Cycled through all 8 LEDs?
+		btfss	    STATUS, Z	    ; YES => Skip next instruction
+		goto	    again8	    ; NO => Blink next LED
+		return			    ; Return
 
 ;--------------------------------------------------------------------------
 ; Main Program - Blinking 8 LEDs sequentially
