@@ -5,9 +5,10 @@
 ;   - Blink 8 LEDs sequentially.
 ;
 ; Objectives:
-;   1. Blink the LEDs sequentially.
+;   1. Blink the LEDs sequentially: blink RB0, then RB1 ..., then RB7,
+;      then RB0 then RB1, then ...
 ;   2. Each LED should turn on for 1 second and then off for 1 second,
-;       before blinking the next LED.
+;      before blinking the next LED.
 ;
 ; Setup:
 ;   - An LED and series resistor are connected to each pin RB0 to RB7.
@@ -194,6 +195,46 @@ again1s		call	    delay10ms
 		return			    ; Return				    (2 cycles)
 
 ;--------------------------------------------------------------------------
+;		Subroutine for Blinking 8 LEDs Sequentially
+; Blinks the 8 LEDs in sequence from RB0 to RB7 with 1s delays
+;--------------------------------------------------------------------------
+sequential_blink
+		bsf	    PORTB, 0x00   ; Turn on LED connected to RB0 pin
+		call	    delay1s	    ; for 1 second
+		bcf	    PORTB, 0x00   ; Turn off LED connected to RB0 pin
+		call	    delay1s	    ; for 1 second
+		bsf	    PORTB, 0x01   ; Turn on LED connected to RB1 pin
+		call	    delay1s	    ; for 1 second
+		bcf	    PORTB, 0x01   ; Turn off LED connected to RB1 pin
+		call	    delay1s	    ; for 1 second
+		bsf	    PORTB, 0x02   ; Turn on LED connected to RB2 pin
+		call	    delay1s	    ; for 1 second
+		bcf	    PORTB, 0x02   ; Turn off LED connected to RB2 pin
+		call	    delay1s	    ; for 1 second
+		bsf	    PORTB, 0x03   ; Turn on LED connected to RB3 pin
+		call	    delay1s	    ; for 1 second
+		bcf	    PORTB, 0x03   ; Turn off LED connected to RB3 pin
+		call	    delay1s	    ; for 1 second
+		bsf	    PORTB, 0x04   ; Turn on LED connected to RB4 pin
+		call	    delay1s	    ; for 1 second
+		bcf	    PORTB, 0x04   ; Turn off LED connected to RB4 pin
+		call	    delay1s	    ; for 1 second
+		bsf	    PORTB, 0x05   ; Turn on LED connected to RB5 pin
+		call	    delay1s	    ; for 1 second
+		bcf	    PORTB, 0x05   ; Turn off LED connected to RB5 pin
+		call	    delay1s	    ; for 1 second
+		bsf	    PORTB, 0x06   ; Turn on LED connected to RB6 pin
+		call	    delay1s	    ; for 1 second
+		bcf	    PORTB, 0x06   ; Turn off LED connected to RB6 pin
+		call	    delay1s	    ; for 1 second
+		bsf	    PORTB, 0x07   ; Turn on LED connected to RB7 pin
+		call	    delay1s	    ; for 1 second
+		bcf	    PORTB, 0x07   ; Turn off LED connected to RB7 pin
+		call	    delay1s	    ; for 1 second
+
+		return
+
+;--------------------------------------------------------------------------
 ; Main Program - Blinking 8 LEDs sequentially
 ;--------------------------------------------------------------------------
 start		bsf	    STATUS, RP0	    ; Select Bank 1
@@ -201,21 +242,7 @@ start		bsf	    STATUS, RP0	    ; Select Bank 1
 		movwf	    TRISB	    ; Set all pins of PORTB as OUTPUTs
 		bcf	    STATUS, RP0	    ; Select Bank 0
 
-Count8		equ	    0x25
-
-		movlw	    d'8'	    ; Load d'8' into W
-		movwf	    Count8	    ; Move W into Count8
-
-again8		decf	    Count8	    ; Decrement Count8
-		bsf	    PORTB, Count8   ; Turn on LED connected to Count8 pin
-		call	    delay1s	    ; for 1 second
-		bcf	    PORTB, Count8   ; Turn off LED connected to Count8 pin
-		call	    delay1s	    ; for 1 second
-		movlw	    0x00	    ; Load 0x00 in W
-		xorwf	    Count8, 0	    ; Is Count8 = 0?
-		btfss	    STATUS, Z	    ; YES => Skip next instruction
-		goto	    again8	    ; NO => Blink next LED
-
-stop		goto	    stop
+keep_blinking	call	    sequential_blink
+		goto	    keep_blinking
 
 		end
