@@ -215,7 +215,7 @@ again8		decf	    Count8	    ; Decrement Count8
 		xorwf	    Count8, 0	    ; Is Count8 = 0?
 		btfss	    STATUS, Z	    ; YES => Skip next instruction
 		goto	    again8	    ; NO => Blink next LED
-		
-stop		goto	    stop	    
+
+stop		goto	    stop
 
 		end
