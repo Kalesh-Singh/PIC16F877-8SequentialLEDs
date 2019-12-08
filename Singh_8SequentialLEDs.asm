@@ -1,3 +1,6 @@
+; NOTE: Please Clean and Build after unzipping and opening the project for
+;       the first time.
+    
 ;**************************************************************************
 ;			    8 SEQUENTIAL LEDs
 ;**************************************************************************
@@ -33,6 +36,22 @@
 
 		org	    0x0000
 		goto	    start
+		
+		nop
+		nop
+		nop
+		nop	
+		
+;--------------------------------------------------------------------------
+; Main Program - Blinking 8 LEDs sequentially
+;--------------------------------------------------------------------------
+start		bsf	    STATUS, RP0	    ; Select Bank 1
+		movlw	    0x00	    ; Load 0x00 in W
+		movwf	    TRISB	    ; Set all pins of PORTB as OUTPUTs
+		bcf	    STATUS, RP0	    ; Select Bank 0
+
+keep_blinking	call	    sequential_blink
+		goto	    keep_blinking
 
 ;--------------------------------------------------------------------------
 ;			    DELAY SUBROUTINES
@@ -41,9 +60,7 @@
 ; Operating speed:  DC, 20 MHz clock input
 ;		    DC, 200 ns instruction cycle
 ;--------------------------------------------------------------------------
-
-		org	    0x0005
-
+;
 ;--------------------------------------------------------------------------
 ;			    100us Delay
 ;--------------------------------------------------------------------------
@@ -227,14 +244,6 @@ again8		movf	    LitLED, 0	    ; Move LitLED to W
 		return			    ; Return
 
 ;--------------------------------------------------------------------------
-; Main Program - Blinking 8 LEDs sequentially
+;			    End
 ;--------------------------------------------------------------------------
-start		bsf	    STATUS, RP0	    ; Select Bank 1
-		movlw	    0x00	    ; Load 0x00 in W
-		movwf	    TRISB	    ; Set all pins of PORTB as OUTPUTs
-		bcf	    STATUS, RP0	    ; Select Bank 0
-
-keep_blinking	call	    sequential_blink
-		goto	    keep_blinking
-
 		end
